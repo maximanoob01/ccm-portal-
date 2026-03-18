@@ -1,16 +1,37 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Count
 from .models import Meeting, ApprovalLog
 from .serializers import MeetingSerializer
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+
+def broadcast_meeting_update(meeting, event_type='meeting_updated'):
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        'meetings',
+        {
+            'type': 'meeting_update',
+            'data': {
+                'id': meeting.id,
+                'ref_number': meeting.ref_number,
+                'status': meeting.status,
+                'department': meeting.department,
+                'event': event_type,
+            }
+        }
+    )
+
 
 APPROVAL_FLOW = {
-    'submitted': 'pending_hod',
-    'pending_hod': 'pending_dean',
+    'submitted':    'pending_hod',
+    'pending_hod':  'pending_dean',
     'pending_dean': 'pending_pvc',
-    'pending_pvc': 'approved',
+    'pending_pvc':  'approved',
 }
+
 
 class MeetingViewSet(viewsets.ModelViewSet):
     serializer_class = MeetingSerializer
@@ -37,6 +58,7 @@ class MeetingViewSet(viewsets.ModelViewSet):
         if meeting.status == 'draft':
             meeting.status = 'submitted'
             meeting.save()
+            broadcast_meeting_update(meeting, 'meeting_submitted')
         return Response({'status': meeting.status})
 
     @action(detail=True, methods=['post'])
@@ -52,6 +74,7 @@ class MeetingViewSet(viewsets.ModelViewSet):
                 action='approved',
                 comment=request.data.get('comment', '')
             )
+            broadcast_meeting_update(meeting, 'meeting_approved')
         return Response({'status': meeting.status})
 
     @action(detail=False, methods=['get'])
