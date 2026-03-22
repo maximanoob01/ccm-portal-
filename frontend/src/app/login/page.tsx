@@ -15,6 +15,8 @@ const DEPARTMENTS = [
     'Applied Sciences',
 ];
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+
 export default function LoginPage() {
     const router = useRouter();
     const [screen, setScreen] = useState<Screen>('select');
@@ -41,7 +43,7 @@ export default function LoginPage() {
         setLoading(true);
         setError('');
         try {
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/auth/token/`, loginForm);
+            const { data } = await axios.post(`${API_URL}/auth/token/`, loginForm);
             localStorage.setItem('access_token', data.access);
             localStorage.setItem('refresh_token', data.refresh);
             localStorage.setItem('role', role);
@@ -64,7 +66,7 @@ export default function LoginPage() {
         }
         setLoading(true);
         try {
-            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/accounts/register/`, {
+            const { data } = await axios.post(`${API_URL}/accounts/register/`, {
                 name: signupForm.name,
                 department: signupForm.department,
                 password: signupForm.password,
@@ -78,10 +80,6 @@ export default function LoginPage() {
     };
 
     const isAdmin = screen === 'admin-login';
-    const accentColor = isAdmin ? '#6366f1' : '#0d9488';
-    const accentGradient = isAdmin
-        ? 'linear-gradient(135deg,#6366f1,#8b5cf6)'
-        : 'linear-gradient(135deg,#0d9488,#0891b2)';
 
     const inputStyle = (accent: string) => ({
         width: '100%',
@@ -106,7 +104,6 @@ export default function LoginPage() {
     };
 
     return (
-        /* Outer Background Wrapper */
         <div style={{
             display: 'flex',
             alignItems: 'center',
@@ -134,23 +131,10 @@ export default function LoginPage() {
         .role-btn:hover { transform: translateY(-3px); }
         .link-btn { background:none; border:none; cursor:pointer; font-family:inherit; }
         input:focus, select:focus { outline: none; }
-        
-        /* MOBILE RESPONSIVENESS */
-        @media (max-width:900px) { 
-            .main-card { 
-                flex-direction: column !important; 
-                height: auto !important; 
-                min-height: auto !important;
-                max-height: none !important;
-                border-radius: 20px !important; 
-            }
-            .rp { display: none !important; } 
-            .lp { 
-                width: 100% !important; 
-                border-radius: 20px !important; 
-                padding: 32px 24px !important; 
-            }
-            /* Text & Spacing Reductions */
+        @media (max-width:900px) {
+            .main-card { flex-direction: column !important; height: auto !important; min-height: auto !important; max-height: none !important; border-radius: 20px !important; }
+            .rp { display: none !important; }
+            .lp { width: 100% !important; border-radius: 20px !important; padding: 32px 24px !important; }
             .title-text { font-size: 24px !important; margin-bottom: 6px !important; }
             .sub-text { font-size: 13px !important; margin-bottom: 28px !important; }
             .role-btn { padding: 16px 20px !important; gap: 14px !important; }
@@ -165,7 +149,6 @@ export default function LoginPage() {
         }
       `}</style>
 
-            {/* Main Floating Card Container */}
             <div className="main-card" style={{
                 display: 'flex',
                 width: '100%',
@@ -175,31 +158,24 @@ export default function LoginPage() {
                 maxHeight: '800px',
                 background: '#0f172a',
                 borderRadius: '24px',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255,255,255,0.05)',
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.05)',
                 overflow: 'hidden',
                 position: 'relative'
             }}>
 
-                {/* Top Right Header Text */}
                 <div style={{ position: 'absolute', top: 32, right: 40, zIndex: 20, textAlign: 'right', pointerEvents: 'none' }} className="rp">
                     <div style={{ color: '#fff', fontSize: 13, fontWeight: 800, letterSpacing: '0.1em' }}>CCM PORTAL</div>
                     <div style={{ color: '#94a3b8', fontSize: 10, fontWeight: 600, letterSpacing: '0.05em', marginTop: 2 }}>COER UNIVERSITY</div>
                 </div>
 
-                {/* ── LEFT PANEL ── */}
+                {/* LEFT PANEL */}
                 <div className="lp" style={{
                     width: '44%', background: '#0f172a',
                     display: 'flex', flexDirection: 'column',
                     padding: '40px 48px', overflowY: 'auto',
                 }}>
-
-                    {/* Mobile-Ready Logo Header */}
                     <div className="logo-wrap" style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 44, flexShrink: 0 }}>
-                        <div style={{
-                            width: 40, height: 40, background: '#fff',
-                            borderRadius: 10, flexShrink: 0,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden'
-                        }}>
+                        <div style={{ width: 40, height: 40, background: '#fff', borderRadius: 10, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                             <img src="/coer.jpg.jpg" alt="COER" style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                                 onError={(e: any) => {
                                     e.target.style.display = 'none';
@@ -214,7 +190,7 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    {/* ── SELECT SCREEN ── */}
+                    {/* SELECT */}
                     {screen === 'select' && (
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                             <h1 className="title-text" style={{ color: '#fff', fontSize: 30, fontWeight: 800, marginBottom: 8 }}>Login into CCM Portal</h1>
@@ -222,13 +198,7 @@ export default function LoginPage() {
                                 Choose how you want to access<br />the CCM management system.
                             </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-
-                                {/* Faculty */}
-                                <button className="role-btn" onClick={() => reset('faculty-login')} style={{
-                                    background: 'linear-gradient(135deg,#0d9488,#0891b2)',
-                                    border: 'none', borderRadius: 18, padding: '22px 24px',
-                                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 18, textAlign: 'left',
-                                }}>
+                                <button className="role-btn" onClick={() => reset('faculty-login')} style={{ background: 'linear-gradient(135deg,#0d9488,#0891b2)', border: 'none', borderRadius: 18, padding: '22px 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 18, textAlign: 'left' }}>
                                     <div className="role-btn-icon" style={{ width: 52, height: 52, flexShrink: 0, background: 'rgba(255,255,255,.2)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26 }}>👨‍🏫</div>
                                     <div style={{ flex: 1 }}>
                                         <div className="role-btn-title" style={{ color: '#fff', fontWeight: 700, fontSize: 16, marginBottom: 3 }}>Faculty</div>
@@ -236,13 +206,7 @@ export default function LoginPage() {
                                     </div>
                                     <span style={{ color: 'rgba(255,255,255,.5)', fontSize: 20 }}>→</span>
                                 </button>
-
-                                {/* Admin */}
-                                <button className="role-btn" onClick={() => reset('admin-login')} style={{
-                                    background: '#1e293b', border: '1.5px solid #334155',
-                                    borderRadius: 18, padding: '22px 24px',
-                                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 18, textAlign: 'left',
-                                }}>
+                                <button className="role-btn" onClick={() => reset('admin-login')} style={{ background: '#1e293b', border: '1.5px solid #334155', borderRadius: 18, padding: '22px 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 18, textAlign: 'left' }}>
                                     <div className="role-btn-icon" style={{ width: 52, height: 52, flexShrink: 0, background: 'rgba(99,102,241,.15)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26 }}>🏛️</div>
                                     <div style={{ flex: 1 }}>
                                         <div className="role-btn-title" style={{ color: '#e2e8f0', fontWeight: 700, fontSize: 16, marginBottom: 3 }}>Administration</div>
@@ -257,12 +221,10 @@ export default function LoginPage() {
                         </div>
                     )}
 
-                    {/* ── FACULTY LOGIN ── */}
+                    {/* FACULTY LOGIN */}
                     {screen === 'faculty-login' && (
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                            <button onClick={() => reset('select')} className="link-btn back-btn" style={{ color: '#d6dae0ff', fontSize: 12, marginBottom: 30, display: 'flex', alignItems: 'center', gap: 6, width: 'fit-content' }}>
-                                ← Back
-                            </button>
+                            <button onClick={() => reset('select')} className="link-btn back-btn" style={{ color: '#d6dae0ff', fontSize: 12, marginBottom: 30, display: 'flex', alignItems: 'center', gap: 6, width: 'fit-content' }}>← Back</button>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28 }}>
                                 <div style={{ width: 50, height: 50, flexShrink: 0, background: 'linear-gradient(135deg,#0d9488,#0891b2)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>👨‍🏫</div>
                                 <div>
@@ -270,27 +232,17 @@ export default function LoginPage() {
                                     <div className="role-btn-sub" style={{ color: '#64748b', fontSize: 13, marginTop: 2 }}>Sign in to your account</div>
                                 </div>
                             </div>
-
                             {error && <div style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.2)', color: '#f87171', borderRadius: 12, padding: '12px 16px', fontSize: 13, marginBottom: 18 }}>⚠️ {error}</div>}
-
                             <form onSubmit={e => handleLogin(e, 'faculty')}>
                                 <div style={{ marginBottom: 16 }}>
                                     <label className="form-label" style={labelStyle}>Username</label>
-                                    <input className="form-input" type="text" value={loginForm.username} onChange={e => setLoginForm({ ...loginForm, username: e.target.value })}
-                                        placeholder="e.g. dr.priya" required style={inputStyle('#0d9488')}
-                                        onFocus={e => e.target.style.borderColor = '#0d9488'}
-                                        onBlur={e => e.target.style.borderColor = '#334155'} />
+                                    <input className="form-input" type="text" value={loginForm.username} onChange={e => setLoginForm({ ...loginForm, username: e.target.value })} placeholder="e.g. dr.priya" required style={inputStyle('#0d9488')} onFocus={e => e.target.style.borderColor = '#0d9488'} onBlur={e => e.target.style.borderColor = '#334155'} />
                                 </div>
                                 <div style={{ marginBottom: 10 }}>
                                     <label className="form-label" style={labelStyle}>Password</label>
                                     <div style={{ position: 'relative' }}>
-                                        <input className="form-input" type={showPass ? 'text' : 'password'} value={loginForm.password} onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
-                                            placeholder="Enter your password" required style={{ ...inputStyle('#0d9488'), paddingRight: 46 }}
-                                            onFocus={e => e.target.style.borderColor = '#0d9488'}
-                                            onBlur={e => e.target.style.borderColor = '#334155'} />
-                                        <button type="button" onClick={() => setShowPass(!showPass)} className="link-btn" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontSize: 16 }}>
-                                            {showPass ? '🙈' : '👁️'}
-                                        </button>
+                                        <input className="form-input" type={showPass ? 'text' : 'password'} value={loginForm.password} onChange={e => setLoginForm({ ...loginForm, password: e.target.value })} placeholder="Enter your password" required style={{ ...inputStyle('#0d9488'), paddingRight: 46 }} onFocus={e => e.target.style.borderColor = '#0d9488'} onBlur={e => e.target.style.borderColor = '#334155'} />
+                                        <button type="button" onClick={() => setShowPass(!showPass)} className="link-btn" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontSize: 16 }}>{showPass ? '🙈' : '👁️'}</button>
                                     </div>
                                 </div>
                                 <div style={{ textAlign: 'right', marginBottom: 24 }}>
@@ -300,25 +252,17 @@ export default function LoginPage() {
                                     {loading ? 'Signing in…' : 'Login →'}
                                 </button>
                             </form>
-
-                            {/* Create account link */}
                             <div style={{ marginTop: 24, textAlign: 'center', padding: '16px', background: '#1e293b', borderRadius: 14, border: '1px solid #334155' }}>
                                 <span style={{ color: '#64748b', fontSize: 13 }}>Don't have an account? </span>
-                                <button onClick={() => reset('faculty-signup')} className="link-btn" style={{ color: '#0d9488', fontSize: 13, fontWeight: 700 }}>
-                                    Create Account →
-                                </button>
+                                <button onClick={() => reset('faculty-signup')} className="link-btn" style={{ color: '#0d9488', fontSize: 13, fontWeight: 700 }}>Create Account →</button>
                             </div>
                         </div>
                     )}
 
-                    {/* ── FACULTY SIGNUP ── */}
+                    {/* FACULTY SIGNUP */}
                     {screen === 'faculty-signup' && (
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                            <button onClick={() => reset('faculty-login')} className="link-btn back-btn" style={{ color: '#d7dde4ff', fontSize: 13, marginBottom: 28, display: 'flex', alignItems: 'center', gap: 6, width: 'fit-content' }}>
-                                ← Back to Login
-                            </button>
-
-                            {/* Success state */}
+                            <button onClick={() => reset('faculty-login')} className="link-btn back-btn" style={{ color: '#d7dde4ff', fontSize: 13, marginBottom: 28, display: 'flex', alignItems: 'center', gap: 6, width: 'fit-content' }}>← Back to Login</button>
                             {signupSuccess ? (
                                 <div style={{ textAlign: 'center' }}>
                                     <div style={{ width: 64, height: 64, background: 'rgba(13,148,136,.15)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, margin: '0 auto 16px' }}>✅</div>
@@ -329,9 +273,7 @@ export default function LoginPage() {
                                         <div style={{ color: '#0d9488', fontFamily: 'monospace', fontSize: 18, fontWeight: 700 }}>{signupSuccess.username}</div>
                                         <div style={{ color: '#475569', fontSize: 11, marginTop: 6 }}>Save this — you'll need it to log in</div>
                                     </div>
-                                    <button className="submit-btn" onClick={() => reset('faculty-login')} style={{ width: '100%', background: 'linear-gradient(135deg,#0d9488,#0891b2)', border: 'none', borderRadius: 12, padding: '14px', color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit' }}>
-                                        Go to Login →
-                                    </button>
+                                    <button className="submit-btn" onClick={() => reset('faculty-login')} style={{ width: '100%', background: 'linear-gradient(135deg,#0d9488,#0891b2)', border: 'none', borderRadius: 12, padding: '14px', color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer', fontFamily: 'inherit' }}>Go to Login →</button>
                                 </div>
                             ) : (
                                 <>
@@ -339,55 +281,33 @@ export default function LoginPage() {
                                         <div className="title-text" style={{ color: '#fff', fontWeight: 800, fontSize: 22, marginBottom: 4 }}>Create Account</div>
                                         <div className="role-btn-sub" style={{ color: '#64748b', fontSize: 13 }}>Fill in your details to get started</div>
                                     </div>
-
                                     {error && <div style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.2)', color: '#f87171', borderRadius: 12, padding: '12px 16px', fontSize: 13, marginBottom: 18 }}>⚠️ {error}</div>}
-
                                     <form onSubmit={handleSignup}>
                                         <div style={{ marginBottom: 16 }}>
                                             <label className="form-label" style={labelStyle}>Full Name</label>
-                                            <input className="form-input" type="text" value={signupForm.name} onChange={e => setSignupForm({ ...signupForm, name: e.target.value })}
-                                                placeholder="e.g. Dr. Priya Sharma" required style={inputStyle('#0d9488')}
-                                                onFocus={e => e.target.style.borderColor = '#0d9488'}
-                                                onBlur={e => e.target.style.borderColor = '#334155'} />
+                                            <input className="form-input" type="text" value={signupForm.name} onChange={e => setSignupForm({ ...signupForm, name: e.target.value })} placeholder="e.g. Dr. Priya Sharma" required style={inputStyle('#0d9488')} onFocus={e => e.target.style.borderColor = '#0d9488'} onBlur={e => e.target.style.borderColor = '#334155'} />
                                         </div>
-
                                         <div style={{ marginBottom: 16 }}>
                                             <label className="form-label" style={labelStyle}>Department</label>
-                                            <select className="form-input" value={signupForm.department} onChange={e => setSignupForm({ ...signupForm, department: e.target.value })}
-                                                required style={{ ...inputStyle('#0d9488'), appearance: 'none' as const, cursor: 'pointer' }}
-                                                onFocus={e => e.target.style.borderColor = '#0d9488'}
-                                                onBlur={e => e.target.style.borderColor = '#334155'}>
+                                            <select className="form-input" value={signupForm.department} onChange={e => setSignupForm({ ...signupForm, department: e.target.value })} required style={{ ...inputStyle('#0d9488'), appearance: 'none' as const, cursor: 'pointer' }} onFocus={e => e.target.style.borderColor = '#0d9488'} onBlur={e => e.target.style.borderColor = '#334155'}>
                                                 <option value="">Select your department…</option>
                                                 {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
                                             </select>
                                         </div>
-
                                         <div style={{ marginBottom: 16 }}>
                                             <label className="form-label" style={labelStyle}>Password</label>
                                             <div style={{ position: 'relative' }}>
-                                                <input className="form-input" type={showPass ? 'text' : 'password'} value={signupForm.password} onChange={e => setSignupForm({ ...signupForm, password: e.target.value })}
-                                                    placeholder="Min. 6 characters" required style={{ ...inputStyle('#0d9488'), paddingRight: 46 }}
-                                                    onFocus={e => e.target.style.borderColor = '#0d9488'}
-                                                    onBlur={e => e.target.style.borderColor = '#334155'} />
-                                                <button type="button" onClick={() => setShowPass(!showPass)} className="link-btn" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontSize: 16 }}>
-                                                    {showPass ? '🙈' : '👁️'}
-                                                </button>
+                                                <input className="form-input" type={showPass ? 'text' : 'password'} value={signupForm.password} onChange={e => setSignupForm({ ...signupForm, password: e.target.value })} placeholder="Min. 6 characters" required style={{ ...inputStyle('#0d9488'), paddingRight: 46 }} onFocus={e => e.target.style.borderColor = '#0d9488'} onBlur={e => e.target.style.borderColor = '#334155'} />
+                                                <button type="button" onClick={() => setShowPass(!showPass)} className="link-btn" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontSize: 16 }}>{showPass ? '🙈' : '👁️'}</button>
                                             </div>
                                         </div>
-
                                         <div style={{ marginBottom: 24 }}>
                                             <label className="form-label" style={labelStyle}>Confirm Password</label>
                                             <div style={{ position: 'relative' }}>
-                                                <input className="form-input" type={showConfirm ? 'text' : 'password'} value={signupForm.confirm} onChange={e => setSignupForm({ ...signupForm, confirm: e.target.value })}
-                                                    placeholder="Repeat your password" required style={{ ...inputStyle('#0d9488'), paddingRight: 46 }}
-                                                    onFocus={e => e.target.style.borderColor = '#0d9488'}
-                                                    onBlur={e => e.target.style.borderColor = '#334155'} />
-                                                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="link-btn" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontSize: 16 }}>
-                                                    {showConfirm ? '🙈' : '👁️'}
-                                                </button>
+                                                <input className="form-input" type={showConfirm ? 'text' : 'password'} value={signupForm.confirm} onChange={e => setSignupForm({ ...signupForm, confirm: e.target.value })} placeholder="Repeat your password" required style={{ ...inputStyle('#0d9488'), paddingRight: 46 }} onFocus={e => e.target.style.borderColor = '#0d9488'} onBlur={e => e.target.style.borderColor = '#334155'} />
+                                                <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="link-btn" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontSize: 16 }}>{showConfirm ? '🙈' : '👁️'}</button>
                                             </div>
                                         </div>
-
                                         <button className="submit-btn" type="submit" disabled={loading} style={{ width: '100%', background: 'linear-gradient(135deg,#0d9488,#0891b2)', border: 'none', borderRadius: 12, padding: '15px', color: '#fff', fontWeight: 700, fontSize: 15, cursor: 'pointer', opacity: loading ? .7 : 1, fontFamily: 'inherit' }}>
                                             {loading ? 'Creating account…' : 'Create Account →'}
                                         </button>
@@ -397,12 +317,10 @@ export default function LoginPage() {
                         </div>
                     )}
 
-                    {/* ── ADMIN LOGIN ── */}
+                    {/* ADMIN LOGIN */}
                     {screen === 'admin-login' && (
                         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                            <button onClick={() => reset('select')} className="link-btn back-btn" style={{ color: '#dadfe7ff', fontSize: 15, marginBottom: 32, display: 'flex', alignItems: 'center', gap: 6, width: 'fit-content' }}>
-                                ← Back
-                            </button>
+                            <button onClick={() => reset('select')} className="link-btn back-btn" style={{ color: '#dadfe7ff', fontSize: 15, marginBottom: 32, display: 'flex', alignItems: 'center', gap: 6, width: 'fit-content' }}>← Back</button>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 28 }}>
                                 <div style={{ width: 50, height: 50, flexShrink: 0, background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', borderRadius: 14, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>🏛️</div>
                                 <div>
@@ -410,27 +328,17 @@ export default function LoginPage() {
                                     <div className="role-btn-sub" style={{ color: '#64748b', fontSize: 13, marginTop: 2 }}>Administration portal</div>
                                 </div>
                             </div>
-
                             {error && <div style={{ background: 'rgba(239,68,68,.1)', border: '1px solid rgba(239,68,68,.2)', color: '#f87171', borderRadius: 12, padding: '12px 16px', fontSize: 13, marginBottom: 18 }}>⚠️ {error}</div>}
-
                             <form onSubmit={e => handleLogin(e, 'admin')}>
                                 <div style={{ marginBottom: 16 }}>
                                     <label className="form-label" style={labelStyle}>Username</label>
-                                    <input className="form-input" type="text" value={loginForm.username} onChange={e => setLoginForm({ ...loginForm, username: e.target.value })}
-                                        placeholder="Enter admin username" required style={inputStyle('#6366f1')}
-                                        onFocus={e => e.target.style.borderColor = '#6366f1'}
-                                        onBlur={e => e.target.style.borderColor = '#334155'} />
+                                    <input className="form-input" type="text" value={loginForm.username} onChange={e => setLoginForm({ ...loginForm, username: e.target.value })} placeholder="Enter admin username" required style={inputStyle('#6366f1')} onFocus={e => e.target.style.borderColor = '#6366f1'} onBlur={e => e.target.style.borderColor = '#334155'} />
                                 </div>
                                 <div style={{ marginBottom: 10 }}>
                                     <label className="form-label" style={labelStyle}>Password</label>
                                     <div style={{ position: 'relative' }}>
-                                        <input className="form-input" type={showPass ? 'text' : 'password'} value={loginForm.password} onChange={e => setLoginForm({ ...loginForm, password: e.target.value })}
-                                            placeholder="Enter your password" required style={{ ...inputStyle('#6366f1'), paddingRight: 46 }}
-                                            onFocus={e => e.target.style.borderColor = '#6366f1'}
-                                            onBlur={e => e.target.style.borderColor = '#334155'} />
-                                        <button type="button" onClick={() => setShowPass(!showPass)} className="link-btn" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontSize: 16 }}>
-                                            {showPass ? '🙈' : '👁️'}
-                                        </button>
+                                        <input className="form-input" type={showPass ? 'text' : 'password'} value={loginForm.password} onChange={e => setLoginForm({ ...loginForm, password: e.target.value })} placeholder="Enter your password" required style={{ ...inputStyle('#6366f1'), paddingRight: 46 }} onFocus={e => e.target.style.borderColor = '#6366f1'} onBlur={e => e.target.style.borderColor = '#334155'} />
+                                        <button type="button" onClick={() => setShowPass(!showPass)} className="link-btn" style={{ position: 'absolute', right: 14, top: '50%', transform: 'translateY(-50%)', color: '#475569', fontSize: 16 }}>{showPass ? '🙈' : '👁️'}</button>
                                     </div>
                                 </div>
                                 <div style={{ textAlign: 'right', marginBottom: 24 }}>
@@ -443,7 +351,6 @@ export default function LoginPage() {
                         </div>
                     )}
 
-                    {/* Footer */}
                     <div style={{ paddingTop: 20, color: '#87888bff', fontSize: 13, textAlign: 'center' }}>
                         Developed by{' '}
                         <a href="https://www.linkedin.com/in/shourya-gupta" target="_blank" rel="noopener noreferrer" style={{ color: '#fbfdffff', textDecoration: 'none' }}>
@@ -452,40 +359,23 @@ export default function LoginPage() {
                     </div>
                 </div>
 
-                {/* ── RIGHT PANEL ── */}
-                <div className="rp" style={{
-                    flex: 1,
-                    background: 'linear-gradient(150deg,#0f172a 0%,#0f2744 50%,#0f172a 100%)',
-                    display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', justifyContent: 'center',
-                    padding: '48px', position: 'relative', overflow: 'hidden',
-                }}>
+                {/* RIGHT PANEL */}
+                <div className="rp" style={{ flex: 1, background: 'linear-gradient(150deg,#0f172a 0%,#0f2744 50%,#0f172a 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px', position: 'relative', overflow: 'hidden' }}>
                     <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 500, height: 500, background: 'radial-gradient(circle,rgba(13,148,136,.18) 0%,transparent 70%)', pointerEvents: 'none' }} />
-
-                    {/* Floating card */}
-                    <div className="card-float" style={{
-                        width: 340, background: 'linear-gradient(160deg,#1e293b,#162032)',
-                        borderRadius: 28, border: '1px solid rgba(255,255,255,.08)',
-                        padding: '32px 28px', position: 'relative', zIndex: 2,
-                        boxShadow: '0 30px 80px rgba(0,0,0,.4)',
-                    }}>
+                    <div className="card-float" style={{ width: 340, background: 'linear-gradient(160deg,#1e293b,#162032)', borderRadius: 28, border: '1px solid rgba(255,255,255,.08)', padding: '32px 28px', position: 'relative', zIndex: 2, boxShadow: '0 30px 80px rgba(0,0,0,.4)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 24, paddingBottom: 20, borderBottom: '1px solid rgba(255,255,255,.07)' }}>
-                            <div style={{ width: 52, height: 52, borderRadius: 14, flexShrink: 0, background: '#fff', display: 'flex', alignItems: 'center', justifyItems: 'center', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,.3)', padding: 2 }}>
-                                <img src="/coer.jpg.jpg" width={44} height={44} style={{ objectFit: 'contain', width: '100%', height: '100%' }}
-                                    onError={(e: any) => { e.target.style.display = 'none'; }}
-                                />
+                            <div style={{ width: 52, height: 52, borderRadius: 14, flexShrink: 0, background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', boxShadow: '0 4px 16px rgba(0,0,0,.3)', padding: 2 }}>
+                                <img src="/coer.jpg.jpg" width={44} height={44} style={{ objectFit: 'contain', width: '100%', height: '100%' }} onError={(e: any) => { e.target.style.display = 'none'; }} />
                             </div>
                             <div>
                                 <div style={{ color: '#fff', fontWeight: 700, fontSize: 15 }}>COER University</div>
                                 <div style={{ color: '#64748b', fontSize: 11, marginTop: 3 }}>Roorkee, Uttarakhand</div>
                             </div>
                         </div>
-
                         <div style={{ marginBottom: 20 }}>
                             <div style={{ color: '#94a3b8', fontSize: 10, fontWeight: 600, letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 5 }}>CCM Management System</div>
                             <div style={{ color: '#fff', fontSize: 19, fontWeight: 800, lineHeight: 1.3 }}>Class Committee<br />Meeting Portal</div>
                         </div>
-
                         {[
                             { ref: 'CCM-2526-001', dept: 'CSE', status: 'Approved', color: '#0d9488' },
                             { ref: 'CCM-2526-002', dept: 'ECE', status: 'Pending', color: '#f59e0b' },
@@ -503,7 +393,6 @@ export default function LoginPage() {
                                 </div>
                             </div>
                         ))}
-
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 18, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,.07)' }}>
                             {[{ v: '49', l: 'Meetings' }, { v: '5', l: 'Depts' }, { v: '4', l: 'Approvals' }].map(s => (
                                 <div key={s.l} style={{ textAlign: 'center' }}>
@@ -513,13 +402,10 @@ export default function LoginPage() {
                             ))}
                         </div>
                     </div>
-
-                    {/* Badges */}
                     <div className="b1" style={{ position: 'absolute', top: '16%', right: '9%', background: 'linear-gradient(135deg,#0d9488,#0891b2)', borderRadius: 14, padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 12px 32px rgba(13,148,136,.35)' }}>
                         <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#fff', opacity: .8 }} />
                         <span style={{ color: '#fff', fontSize: 12, fontWeight: 700 }}>Meeting Approved ✓</span>
                     </div>
-
                     <div className="b2" style={{ position: 'absolute', bottom: '18%', left: '7%', background: '#1e293b', border: '1px solid rgba(255,255,255,.1)', borderRadius: 14, padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 12px 32px rgba(0,0,0,.3)' }}>
                         <span style={{ fontSize: 16 }}>🏛️</span>
                         <div>
@@ -527,7 +413,6 @@ export default function LoginPage() {
                             <div style={{ color: '#64748b', fontSize: 10 }}>University overview</div>
                         </div>
                     </div>
-
                     <div className="b3" style={{ position: 'absolute', bottom: '28%', right: '7%', background: '#1e293b', border: '1px solid rgba(99,102,241,.3)', borderRadius: 14, padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8, boxShadow: '0 12px 32px rgba(0,0,0,.25)' }}>
                         <span style={{ fontSize: 16 }}>📄</span>
                         <div>
