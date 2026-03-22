@@ -77,6 +77,7 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://ccm-portal-h23t.onrender.com" ,
 ]
 
 LANGUAGE_CODE = 'en-us'

@@ -16,7 +16,8 @@ export function useMeetingSocket(onUpdate: (update: MeetingUpdate) => void) {
     const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const connect = useCallback(() => {
-        const socket = new WebSocket('ws://localhost:8000/ws/meetings/');
+        const wsUrl = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000';
+        const socket = new WebSocket(`${wsUrl}/ws/meetings/`);
 
         socket.onopen = () => {
             console.log('WebSocket connected');

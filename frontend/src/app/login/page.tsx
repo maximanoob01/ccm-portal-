@@ -41,7 +41,7 @@ export default function LoginPage() {
         setLoading(true);
         setError('');
         try {
-            const { data } = await axios.post('http://localhost:8000/api/auth/token/', loginForm);
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/auth/token/`, loginForm);
             localStorage.setItem('access_token', data.access);
             localStorage.setItem('refresh_token', data.refresh);
             localStorage.setItem('role', role);
@@ -64,7 +64,7 @@ export default function LoginPage() {
         }
         setLoading(true);
         try {
-            const { data } = await axios.post('http://localhost:8000/api/accounts/register/', {
+            const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api'}/accounts/register/`, {
                 name: signupForm.name,
                 department: signupForm.department,
                 password: signupForm.password,
